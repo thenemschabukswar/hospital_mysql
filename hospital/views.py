@@ -23,10 +23,13 @@ def patient_list(request):
         serializer = patient_serializer(patient_info, many=True)
         return JsonResponse({'patients':serializer.data})
     elif request.method == 'POST':
+        # import pdb; pdb.set_trace()
         serializer = patient_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status = status.HTTP_201_CREATED)
+        else:
+            return HttpResponse("Bad request", status = status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST', 'PUT'])
 def add_beds(request):
@@ -41,7 +44,7 @@ def add_beds(request):
         hs = hosp_serializer(data=request.data)
         
         if hs.is_valid():
-            x = hs.data
+            x = hs.validated_data
             cond1 = x['single'] < 0
             cond2 = x['double'] < 0
             cond3 = x['triple'] < 0

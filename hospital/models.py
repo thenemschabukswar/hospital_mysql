@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import  MinValueValidator
+# from django.db.models.signals import pre_save
 
 STATUS_CHOICES = (
     ('Primary', 'Primary Checkup'),
@@ -20,7 +21,7 @@ class hosp(models.Model):
     double = models.IntegerField(default=1, blank=True)
     triple = models.IntegerField(default=1, blank=True, validators=[MinValueValidator(0)])
     def __str__(self):
-        return str(self.id)
+        return "Hospital - " + str(self.r_id)
 
 
 class patient(models.Model):
@@ -35,3 +36,23 @@ class patient(models.Model):
     def __str__(self):
         return self.name + ' - ' + self.status
 
+class patientdata(models.Model):
+    p_id = models.AutoField(primary_key = True)
+    room = models.ForeignKey(hosp, on_delete=models.CASCADE, default=1)
+    name = models.CharField(max_length = 40)
+    hospital = models.CharField(max_length = 30)
+    disease = models.CharField(max_length=40)
+    status = models.CharField(max_length = 20, choices=STATUS_CHOICES, default='Primary')
+    allergies = models.CharField(max_length=50, blank=True)
+    remarks = models.CharField(max_length=500, blank=True)
+    def __str__(self):
+        return self.name + ' - ' + self.status
+
+# def create_profile(sender, instance, created, **kwargs):
+#     if created:
+#         patient.objects.create(user=instance)
+#         print("Patient created")
+
+# def update_profile(sender, instance, created, **kwargs):
+#     if not created:
+#         instance.
